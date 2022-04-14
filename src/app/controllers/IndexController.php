@@ -12,16 +12,10 @@ class IndexController extends Controller
     public function indexAction()
     {
         $collection = $this->mongo->users;
-
-        $insertOneResult = $collection->insertOne([
-            'username' => 'ak',
-            'email' => 'ak@gmail.com',
-            'name' => 'User',
-        ]);
-
-        printf("Inserted %d document(s)\n", $insertOneResult->getInsertedCount());
-
-        var_dump($insertOneResult->getInsertedId());die;
+        if ($this->request->isPost()) {
+            $insertOneResult = $collection->insertOne($this->request->getPost());
+            $this->view->message=$insertOneResult->getInsertedId();
+        }
     }
 
     /**
@@ -29,11 +23,10 @@ class IndexController extends Controller
      *
      * @return void
      */
-    public function findAction()
+    public function readAction()
     {
         $collection = $this->mongo->users;
-        echo '<pre>';
-        print_r($collection->findOne(['username' => 'amit']));die;
+        $this->view->users=$collection->find();
     }
 
     /**
@@ -41,24 +34,40 @@ class IndexController extends Controller
      *
      * @return void
      */
-    public function updateAction()
+    public function updateAction($id)
     {
+        //Find user using _id
         $collection = $this->mongo->users;
-        $updateResult = $collection->updateOne(
-            ['username'=>'admin'],
-            ['$set'=>['email'=>'admin@gmail.com']]
-        );
-        printf("Matched %d document(s)\n", $updateResult->getMatchedCount());die;
+        $this->view->users=$collection->findOne(['_id' => new MongoDB\BSON\ObjectID($id)]);
+        if ($this->request->isPost()) {
+            //Update user details
+            $updateResult = $collection->updateOne(
+                ['_id'=>new MongoDB\BSON\ObjectID($id)],
+                ['$set'=>$this->request->getPost()]
+            );
+        $this->view->message=$updateResult->getMatchedCount();
+        }
+        
     }
     /**
      * delete document from Users collection
      *
      * @return void
      */
-    public function deleteAction()
+    public function deleteAction($id)
     {
         $collection = $this->mongo->users;
-        $deleteResult = $collection->deleteOne(['username' => 'ak']);
-        printf("Deleted %d document(s)\n", $deleteResult->getDeletedCount());
+        $collection->deleteOne(['_id'=>new MongoDB\BSON\ObjectID($id)]);
+        $this->response->redirect('index/read');
+    }
+    public function isAction()
+    {
+        $collection = $this->mongo->users;
+        $insertOneResult = $collection->insertOne([
+            'name'=>'ak3',
+            'email'=>'ak3@gmail.com',
+            'username'=>'ak3@gmail.com',
+        ]);
+        $this->view->message=$insertOneResult->getInsertedId();
     }
 }

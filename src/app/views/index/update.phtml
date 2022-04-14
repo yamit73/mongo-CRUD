@@ -1,13 +1,13 @@
 <div class="text-center container">
     <main class="form-signin w-25 m-auto">
-
         <?php echo $this->tag->form(''); ?>
-        <h1 class="h3 mb-3 fw-normal">Create</h1>
+        <h1 class="h3 mb-3 fw-normal">Update</h1>
         <div class="form-floating mt-3">
             <?php
             echo $this->tag->textField(
                 [
                     "name",
+                    'value' => $users->name,
                     'class' => 'form-control'
                 ]
             );
@@ -19,6 +19,7 @@
             echo $this->tag->emailField(
                 [
                     "email",
+                    'value' => $users->email,
                     'class' => 'form-control'
                 ]
             );
@@ -30,6 +31,7 @@
             echo $this->tag->textField(
                 [
                     "username",
+                    'value' => $users->username,
                     'class' => 'form-control'
                 ]
             );
@@ -39,7 +41,7 @@
         <?php
         echo $this->tag->submitButton(
             [
-                "Create",
+                "Update",
                 'class' => 'w-100 btn btn-lg btn-primary mt-3'
             ]
         );
@@ -47,4 +49,4 @@
         </form>
     </main>
 </div>
-<div class="alert alert-success w-50 m-auto">uid : <?php if (isset($message))echo $message; ?></div>
+<div class="alert alert-success w-50 m-auto">uid : <?php if (isset($message))printf("Updated %d document(s)\n", $message); ?></div>

@@ -8,7 +8,6 @@ use Phalcon\Url;
 /**
  * Required classes for DB
  */
-use Phalcon\Db\Adapter\Pdo\Mysql;
 use Phalcon\Config;
 use Phalcon\Config\ConfigFactory;
 
@@ -74,27 +73,14 @@ $container->set(
 );
 
 /**
- * DB container
+ * Mongo DB container
  */
 
-// $container->set(
-//     'db',
-//     function () {
-//         $config=$this->get('config')->db;
-//         return new Mysql(
-//             [
-//                 'host'     => $config->host,
-//                 'username' => $config->username,
-//                 'password' => $config->password,
-//                 'dbname'   => $config->dbname,
-//             ]
-//         );
-//     }
-// );
 $container->set(
     'mongo',
     function () {
-        $mongo = new \MongoDB\Client("mongodb://mongo", array("username"=>'root', "password"=>"password123"));
+        $config=$this->get('config')->db;
+        $mongo = new \MongoDB\Client("mongodb://mongo", array("username"=>$config->username, "password"=>$config->password));
 
         return $mongo->test;
     },
